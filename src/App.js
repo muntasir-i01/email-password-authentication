@@ -14,6 +14,7 @@ function App() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [validated, setValidated] = useState(false);
 
   const handleEmailBlur = event => {
     setEmail(event.target.value);
@@ -23,7 +24,18 @@ function App() {
     setPassword(e.target.value);
   }
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = (event) => {
+
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      return; //if invalid
+    }
+
+    setValidated(true);
+
     //console.log('Form submitted', email, password);
     createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
@@ -33,7 +45,7 @@ function App() {
     .catch((error) => {
       console.error(error);
     })
-    e.preventDefault();
+    event.preventDefault();
   }
 
   return (
@@ -43,7 +55,7 @@ function App() {
         <Form onSubmit={handleFormSubmit}>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
-            <Form.Control onBlur={handleEmailBlur} type="email" placeholder="Enter email" />
+            <Form.Control onBlur={handleEmailBlur} type="email" placeholder="Enter email" required />
             <Form.Text className="text-muted">
               We'll never share your email with anyone else.
             </Form.Text>
@@ -51,7 +63,7 @@ function App() {
 
           <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Label>Password</Form.Label>
-            <Form.Control onBlur={handlePasswordBlur} type="password" placeholder="Password" />
+            <Form.Control onBlur={handlePasswordBlur} type="password" placeholder="Password" required />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicCheckbox">
             <Form.Check type="checkbox" label="Check me out" />
