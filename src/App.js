@@ -13,17 +13,18 @@ const auth = getAuth(app);
 function App() {
 
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleEmailBlur = event => {
-    console.log(event.target.value);
+    setEmail(event.target.value);
   }
 
   const handlePasswordBlur = e => {
-    console.log(e.target.value);
+    setPassword(e.target.value);
   }
 
   const handleFormSubmit = (e) => {
-    console.log('Form submitted');
+    console.log('Form submitted', email, password);
     e.preventDefault();
   }
 
