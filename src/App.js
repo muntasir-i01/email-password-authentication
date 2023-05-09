@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import { getAuth } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import app from './firebase.init';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
@@ -24,7 +24,15 @@ function App() {
   }
 
   const handleFormSubmit = (e) => {
-    console.log('Form submitted', email, password);
+    //console.log('Form submitted', email, password);
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user);
+    })
+    .catch((error) => {
+      console.error(error);
+    })
     e.preventDefault();
   }
 
