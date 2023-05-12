@@ -14,7 +14,11 @@ function App() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
   const [validated, setValidated] = useState(false);
+  const [error, setError] = useState('');
+
+  const [register, setRegister] = useState(false);
 
   const handleEmailBlur = event => {
     setEmail(event.target.value);
@@ -24,8 +28,12 @@ function App() {
     setPassword(e.target.value);
   }
 
-  const handleFormSubmit = (event) => {
+  const handleRegisterChange = event => {
+    setRegister(event.target.checked);
+  }
 
+  const handleFormSubmit = (event) => {
+    //event.preventDefault();
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
@@ -34,16 +42,27 @@ function App() {
       return; //if invalid
     }
 
+    if(!/^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!#$%&? "]).*$/.test(password)) {
+      setError('Password should contain one uppercase, one lowercase, one special character');
+      return;
+    }
+
+    //javascript password validation regex
+
     setValidated(true);
+    setError('');
 
     //console.log('Form submitted', email, password);
     createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
         const user = userCredential.user;
         console.log(user);
+        setEmail('');
+        setPassword('');
     })
     .catch((error) => {
-      console.error(error);
+      console.log(error);
+      setError(error.message);
     })
     event.preventDefault();
   }
@@ -51,7 +70,7 @@ function App() {
   return (
     <div>
       <div className='Registration w-50 mx-auto mt-2'>
-        <h2 className='text-primart'>Please Register...</h2>
+        <h2 className='text-primart'>Please {register ? 'Login' : 'Register'}</h2>
         <Form onSubmit={handleFormSubmit}>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
@@ -66,10 +85,11 @@ function App() {
             <Form.Control onBlur={handlePasswordBlur} type="password" placeholder="Password" required />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicCheckbox">
-            <Form.Check type="checkbox" label="Check me out" />
+            <Form.Check onChange={handleRegisterChange} type="checkbox" label="Already Registered?" />
           </Form.Group>
+          <p className='text-danger'>{error}</p>
           <Button variant="primary" type="submit">
-            Submit
+            Register
           </Button>
         </Form>
       </div>
